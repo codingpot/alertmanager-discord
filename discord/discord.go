@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/codingpot/alertmanager-discord/alertman"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 )
@@ -42,7 +42,7 @@ func SendWebhook(amo *alertman.AlertManOut, discordWebhookURL string) {
 	}
 
 	for status, alerts := range groupedAlerts {
-		DO := DiscordOut{}
+		var discordOut DiscordOut
 
 		RichEmbed := DiscordEmbed{
 			Title:       fmt.Sprintf("[%s:%d] %s", strings.ToUpper(status), len(alerts), amo.CommonLabels.Alertname),
@@ -58,25 +58,29 @@ func SendWebhook(amo *alertman.AlertManOut, discordWebhookURL string) {
 		}
 
 		if amo.CommonAnnotations.Summary != "" {
-			DO.Content = fmt.Sprintf(" === %s === \n", amo.CommonAnnotations.Summary)
+			discordOut.Content = fmt.Sprintf(" === %s === \n", amo.CommonAnnotations.Summary)
 		}
 
 		for _, alert := range alerts {
-			realname := alert.Labels["instance"]
-			if strings.Contains(realname, "localhost") && alert.Labels["exported_instance"] != "" {
-				realname = alert.Labels["exported_instance"]
+			realName := alert.Labels["instance"]
+			if strings.Contains(realName, "localhost") && alert.Labels["exported_instance"] != "" {
+				realName = alert.Labels["exported_instance"]
 			}
 
 			RichEmbed.Fields = append(RichEmbed.Fields, DiscordEmbedField{
-				Name:  fmt.Sprintf("[%s]: %s on %s", strings.ToUpper(status), alert.Labels["alertname"], realname),
+				Name:  fmt.Sprintf("[%s]: %s on %s", strings.ToUpper(status), alert.Labels["alertname"], realName),
 				Value: alert.Annotations.Description,
 			})
 		}
 
-		DO.Embeds = []DiscordEmbed{RichEmbed}
+		discordOut.Embeds = []DiscordEmbed{RichEmbed}
+		DOD, _ := json.Marshal(discordOut)
 
-		DOD, _ := json.Marshal(DO)
-		http.Post(discordWebhookURL, "application/json", bytes.NewReader(DOD))
+		_, err := http.Post(discordWebhookURL, "application/json", bytes.NewReader(DOD))
+		if err != nil {
+			log.WithError(err).Error("failed to write to webhook")
+			return
+		}
 	}
 }
 
@@ -87,11 +91,11 @@ func SendRawPromAlertWarn(discordWebhookURL string) {
 		`for guidance on how to configure it for alertmanager` + "\n" +
 		`or https://prometheus.io/docs/alerting/latest/configuration/#webhook_config`
 
-	logrus.Print(`/!\ -- You have misconfigured this software -- /!\`)
-	logrus.Print(`--- --                                      -- ---`)
-	logrus.Print(badString)
+	log.Println(`/!\ -- You have misconfigured this software -- /!\`)
+	log.Println(`--- --                                      -- ---`)
+	log.Println(badString)
 
-	DO := DiscordOut{
+	discordOutBytes, _ := json.Marshal(DiscordOut{
 		Content: "",
 		Embeds: []DiscordEmbed{
 			{
@@ -101,12 +105,10 @@ func SendRawPromAlertWarn(discordWebhookURL string) {
 				Fields:      []DiscordEmbedField{},
 			},
 		},
-	}
-
-	DOD, _ := json.Marshal(DO)
-	_, err := http.Post(discordWebhookURL, "application/json", bytes.NewReader(DOD))
+	})
+	_, err := http.Post(discordWebhookURL, "application/json", bytes.NewReader(discordOutBytes))
 	if err != nil {
-		logrus.Printf("failed to sned the alert")
+		log.Printf("failed to sned the alert")
 		return
 	}
 }
