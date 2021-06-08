@@ -1,9 +1,9 @@
+This is a fork of https://github.com/benjojo/alertmanager-discord to enable a few more features.
+
 alertmanager-discord
 ===
 
 Give this a webhook (with the DISCORD_WEBHOOK environment variable) and point it as a webhook on alertmanager, and it will post your alerts into a discord channel for you as they trigger:
-
-![](/.github/demo-new.png)
 
 ## Warning
 
@@ -19,11 +19,6 @@ alerting:                 receivers:
   - static_configs:         webhook_configs:                   - DISCORD_WEBHOOK=https://discordapp.com/api/we...
     - targets:              - url: 'http://localhost:9094'  
        - 127.0.0.1:9093   
-
-
-
-
-
 ```
 
 ## Example alertmanager config:
@@ -56,4 +51,8 @@ receivers:
 
 ## Docker
 
-If you run a fancy docker/k8s infra, you can find the docker hub repo here: https://hub.docker.com/r/benjojo/alertmanager-discord/
+See https://github.com/orgs/codingpot/packages/container/package/alertmanager-discord for the latest image.
+
+```dockerfile
+FROM ghcr.io/codingpot/alertmanager-discord:v0
+```
