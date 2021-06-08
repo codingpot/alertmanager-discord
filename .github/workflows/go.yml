@@ -70,9 +70,9 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.new_release_version }}
-            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.new_release_major_version }}
-            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.new_release_major_version }}.${{ steps.semantic.outputs.new_release_major_version }}
+            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.outputs.new_release_version }}
+            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.outputs.new_release_major_version }}
+            type=raw,enable=true,prefix=v,value=${{ needs.build_and_release.outputs.new_release_major_version }}.${{ steps.build_and_release.outputs.new_release_major_version }}
 
       - name: Set up Docker Buildx
         id: buildx
