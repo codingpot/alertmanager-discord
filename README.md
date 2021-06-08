@@ -54,5 +54,5 @@ receivers:
 See https://github.com/orgs/codingpot/packages/container/package/alertmanager-discord for the latest image.
 
 ```dockerfile
-FROM ghcr.io/codingpot/alertmanager-discord:v0
+FROM ghcr.io/codingpot/alertmanager-discord:v0.2.0
 ```
