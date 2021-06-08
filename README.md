@@ -17,7 +17,7 @@ Prometheus -------------> alertmanager -------------------> alertmanager-discord
 alerting:                 receivers:                         
   alertmanagers:          - name: 'discord_webhook'         environment:
   - static_configs:         webhook_configs:                   - DISCORD_WEBHOOK=https://discordapp.com/api/we...
-    - targets:              - url: 'http://localhost:9094'  
+    - targets:              - url: 'http://localhost:4000'     - PORT=4000
        - 127.0.0.1:9093   
 ```
 
@@ -46,7 +46,7 @@ route:
 receivers:
 - name: 'discord_webhook'
   webhook_configs:
-  - url: 'http://localhost:9094'
+  - url: 'http://localhost:4000'
 ```
 
 ## Docker
