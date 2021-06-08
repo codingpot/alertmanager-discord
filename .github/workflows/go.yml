@@ -3,21 +3,21 @@ name: Go
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-go@v2
-      with:
-        go-version: 1.16
-    - run: go build -v ./...
-    - run: go test -v ./...
-    - uses: go-semantic-release/action@v1
-      if: ${{ github.ref == 'refs/heads/master' }}
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        allow-initial-development-versions: true
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+      - run: go build -v ./...
+      - run: go test -v ./...
+      - uses: go-semantic-release/action@v1
+        if: ${{ github.ref == 'refs/heads/master' }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          allow-initial-development-versions: true
