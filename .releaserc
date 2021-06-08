@@ -2,6 +2,36 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/github"
+    [
+      "@google/semantic-release-replace-plugin",
+      {
+        "replacements": [
+          {
+            "files": [
+              "README.md"
+            ],
+            "from": "codingpot/alertmanager-discord:v.+",
+            "to": "codingpot/alertmanager-discord:v${nextRelease.version}",
+            "results": [
+              {
+                "file": "README.md",
+                "hasChanged": true,
+                "numMatches": 1,
+                "numReplacements": 1
+              }
+            ],
+            "countMatches": true
+          }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "README.md"
+        ]
+      }
+    ]
   ]
 }
