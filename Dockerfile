@@ -13,7 +13,6 @@ RUN go get -d -v
 #build the binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-w -s" -o /go/bin/alertmanager-discord
 
-
 # STEP 2 build a small image
 # start from scratch
 FROM scratch
